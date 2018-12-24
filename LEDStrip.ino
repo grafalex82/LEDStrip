@@ -25,6 +25,38 @@ enum ButtonPressType
   LONG_PRESS
 };
 
+// List of modes I like (sorted randomly)
+const unsigned char AllowedModes[] = {
+  FX_MODE_CHASE_RAINBOW,
+  FX_MODE_RAINBOW_CYCLE,
+  FX_MODE_RANDOM_COLOR,
+  FX_MODE_COLOR_WIPE_REV,
+  FX_MODE_LARSON_SCANNER,
+  FX_MODE_CHASE_COLOR,
+  FX_MODE_COMET,
+  FX_MODE_FADE,
+  FX_MODE_CHASE_WHITE,
+  FX_MODE_COLOR_SWEEP_RANDOM,
+  FX_MODE_CHASE_RANDOM,
+  FX_MODE_STROBE_RAINBOW,
+  FX_MODE_COLOR_WIPE_RANDOM,
+  FX_MODE_CHASE_BLACKOUT_RAINBOW,
+  FX_MODE_MULTI_DYNAMIC,
+  FX_MODE_SCAN,
+  FX_MODE_RAINBOW,
+  FX_MODE_COLOR_WIPE_INV,
+  FX_MODE_BREATH,
+  FX_MODE_BLINK,
+  FX_MODE_DUAL_SCAN,
+  FX_MODE_SINGLE_DYNAMIC,
+  FX_MODE_COLOR_WIPE,
+  FX_MODE_CHASE_RAINBOW_WHITE,
+  FX_MODE_COLOR_WIPE_REV_INV,
+  FX_MODE_RUNNING_LIGHTS,
+  FX_MODE_BLINK_RAINBOW
+};
+
+
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
 // Parameter 3 = pixel type flags, add together as needed:
@@ -38,10 +70,15 @@ WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_RGB + NEO_KHZ800);
 unsigned long last_change = 0;
 unsigned long now = 0;
 bool disableSwitchOnTimer = false;
+int curMode = 0;
 
 void switchMode()
 {
-  ws2812fx.setMode((ws2812fx.getMode() + 1) % ws2812fx.getModeCount());
+  ws2812fx.setColor(random()%255, random()%255, random()%255);
+
+  curMode = (curMode + 1) % (sizeof(AllowedModes) / sizeof(AllowedModes[0]));
+  ws2812fx.setMode(AllowedModes[curMode]);
+
   last_change = now;
 
   Serial.print("Switched to mode ");
