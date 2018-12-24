@@ -109,6 +109,15 @@ void loop() {
     switchMode();
   }
 
+  if(Serial.available())
+  {
+    while(Serial.available())
+      Serial.read();
+
+    Serial.println("Switching mode by serial");
+    switchMode();
+  }
+
   ButtonPressType btnPressType = getButtonPressType();
   if(btnPressType == SHORT_PRESS)
   {
