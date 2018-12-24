@@ -28,6 +28,7 @@ enum ButtonPressType
 // List of modes I like (sorted randomly)
 const unsigned char AllowedModes[] = {
   FX_MODE_CHASE_RAINBOW,
+  FX_MODE_CUSTOM,
   FX_MODE_RAINBOW_CYCLE,
   FX_MODE_RANDOM_COLOR,
   FX_MODE_COLOR_WIPE_REV,
@@ -38,7 +39,6 @@ const unsigned char AllowedModes[] = {
   FX_MODE_CHASE_WHITE,
   FX_MODE_COLOR_SWEEP_RANDOM,
   FX_MODE_CHASE_RANDOM,
-  FX_MODE_STROBE_RAINBOW,
   FX_MODE_COLOR_WIPE_RANDOM,
   FX_MODE_CHASE_BLACKOUT_RAINBOW,
   FX_MODE_MULTI_DYNAMIC,
@@ -83,6 +83,20 @@ void switchMode()
 
   Serial.print("Switched to mode ");
   Serial.println(ws2812fx.getModeName(ws2812fx.getMode()));
+}
+
+uint16_t myCustomEffect(void)
+{ // random chase
+  WS2812FX::Segment* seg = ws2812fx.getSegment(); // get the current segment
+  for(uint16_t i=seg->stop; i>seg->start; i--) {
+    ws2812fx.setPixelColor(i, ws2812fx.getPixelColor(i-1));
+  }
+  uint32_t color = ws2812fx.getPixelColor(seg->start + 1);
+  int r = random(6) != 0 ? (color >> 16 & 0xFF) : random(256);
+  int g = random(6) != 0 ? (color >> 8  & 0xFF) : random(256);
+  int b = random(6) != 0 ? (color       & 0xFF) : random(256);
+  ws2812fx.setPixelColor(seg->start, r, g, b);
+  return seg->speed; // return the delay until the next animation step (in msec)
 }
 
 bool btnPressed()
@@ -132,6 +146,9 @@ void setup()
   ws2812fx.setSpeed(1000);
   ws2812fx.setColor(0x007BFF);
   ws2812fx.setMode(FX_MODE_STATIC);
+  
+  ws2812fx.setCustomMode(myCustomEffect);
+  
   ws2812fx.start();
 }
 
@@ -169,3 +186,4 @@ void loop() {
     disableSwitchOnTimer = true;
   }
 }
+
