@@ -96,7 +96,7 @@ uint16_t myCustomEffect(void)
   int g = random(6) != 0 ? (color >> 8  & 0xFF) : random(256);
   int b = random(6) != 0 ? (color       & 0xFF) : random(256);
   ws2812fx.setPixelColor(seg->start, r, g, b);
-  return seg->speed; // return the delay until the next animation step (in msec)
+  return seg->speed / 16; // return the delay until the next animation step (in msec)
 }
 
 bool btnPressed()
